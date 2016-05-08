@@ -1,0 +1,153 @@
+Public Class Form1
+
+    Dim data(,) As Double = { _
+        {66, 0.5, -2}, {67, 0.5, -1}, {68, 0.5, 0}, {69, 0.5, 1}, {70, 0.5, 2}, {71, 1, -2}, {72, 1, -1}, {73, 1, 0}, {74, 1, 1}, {75, 1, 2}, _
+        {76, 1.5, -2}, {77, 1.5, -1}, {78, 1.5, 0}, {79, 1.5, 1}, {80, 1.5, 2}, {81, 2, -2}, {82, 2, -1}, {83, 2, 0}, {84, 2, 1}, {85, 2, 2}, _
+        {86, 2.5, -2}, {87, 2.5, -1}, {88, 2.5, 0}, {89, 2.5, 1}, {90, 2.5, 2}, {91, 3, -2}, {92, 3, -1}, {93, 3, 0}, {94, 3, 1}, {95, 3, 2}, _
+        {96, 3.5, -2}, {97, 3.5, -1}, {98, 3.5, 0}, {99, 3.5, 1}, {100, 3.5, 2}, {101, 4, -2}, {102, 4, -1}, {103, 4, 0}, {104, 4, 1}, {105, 4, 2}, _
+        {106, 4.5, -2}, {107, 4.5, -1}, {108, 4.5, 0}, {109, 4.5, 1}, {110, 4.5, 2}, {111, 5, -2}, {112, 5, -1}, {113, 5, 0}, {114, 5, 1}, {115, 5, 2}, _
+        {116, 5.5, -2}, {117, 5.5, -1}, {118, 5.5, 0}, {119, 5.5, 1}, {120, 5.5, 2}, {121, 6, -2}, {122, 6, -1}, {123, 6, 0}, {124, 6, 1}, {125, 6, 2}, _
+        {126, 6.5, -2}, {127, 6.5, -1}, {128, 6.5, 0}, {129, 6.5, 1}, {130, 6.5, 2}, {131, 7, -2}, {132, 7, -1}, {133, 7, 0}, {134, 7, 1}, {135, 7, 2}, _
+        {136, 7.5, -2}, {137, 7.5, -1}, {138, 7.5, 0}, {139, 7.5, 1}, {140, 7.5, 2}, {141, 8, -2}, {142, 8, -1}, {143, 8, 0}, {144, 8, 1}, {145, 8, 2} _
+    }
+
+    Private Sub clearPlayerScoresBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles clearPlayerScoresBtn.Click
+        For i As Integer = 17 To 0 Step -1
+            If i = 16 Then i = 56
+            TableLayoutPanel1.Controls(i).Text = "0"
+            If i = 56 Then i = 16
+        Next
+    End Sub
+
+
+    Private Sub doCalculationsBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles doCalculationsBtn.Click
+        Dim parTotal, grossScore, adjustBy, handicap, worseHolesInt, netScore As Integer
+        Dim worseHolesToBeUsed As Double
+        Dim hasHalf As Boolean
+        'Dim spreads(16), spreadClone(16) As Integer
+        'Dim spreadDex As Integer = 0
+
+        Dim scores(16), scoresClone(16) As Integer
+        Dim scoreDex As Integer
+
+        For i As Integer = 16 To 0 Step -1
+            If i = 16 Then i = 56
+            grossScore += Integer.Parse(TableLayoutPanel1.Controls(i).Text)
+            If i = 56 Then i = 16
+            parTotal += Integer.Parse(TableLayoutPanel1.Controls(38 + i).Text)
+            If i = 16 Then i = 56
+            If i <> 0 Then
+                ' spreads(spreadDex) = Integer.Parse(TableLayoutPanel1.Controls(38 + (17 - i)).Text) - Integer.Parse(TableLayoutPanel1.Controls(i).Text)
+                'spreadDex += 1
+                scores(scoreDex) = Integer.Parse(TableLayoutPanel1.Controls(i).Text)
+                scoreDex += 1
+            End If
+            If i = 56 Then i = 16
+        Next
+        If grossScore < 66 Or grossScore > 145 Then
+            MsgBox("Your gross score is: " & grossScore & ". Sorry this program does not support that score")
+            Return
+        End If
+
+        adjustBy = data(grossScore - 66, 2)
+        worseHolesToBeUsed = data(grossScore - 66, 1)
+
+        If worseHolesToBeUsed.ToString.Contains(".") Then hasHalf = True
+        worseHolesInt = worseHolesToBeUsed
+
+        scoresClone = scores.Clone
+        Array.Sort(scoresClone)
+
+        Dim worseScores(worseHolesInt - 1) As Integer
+        scoreDex = 0
+
+        For i As Integer = 16 To 16 - (worseHolesInt - 1) Step -1
+            worseScores(scoreDex) = scoresClone(i)
+            scoreDex += 1
+        Next
+
+        scoresClone = scores.Clone
+
+        Dim worseHoles(worseHolesInt - 1) As Integer
+        Dim worseHoleDex As Integer
+
+        For i As Integer = 0 To worseScores.Length - 1
+            For j As Integer = 0 To scoresClone.Length - 1
+                If worseScores(i) = scoresClone(j) Then
+                    worseHoles(worseHoleDex) = j + 1
+                    worseHoleDex += 1
+                    scoresClone(j) = -100
+                    Exit For
+                End If
+            Next
+        Next
+
+        Dim toAdd As Integer
+        For i As Integer = 0 To worseScores.Length - 1
+            If worseScores(i) > ((Integer.Parse(TableLayoutPanel1.Controls(37 + worseHoles(i)).Text) * 2) + 1) Then
+                toAdd = ((Integer.Parse(TableLayoutPanel1.Controls(37 + worseHoles(i)).Text) * 2) + 1)
+                If i = (worseScores.Length - 1) And hasHalf Then toAdd /= 2
+                handicap += toAdd
+            Else
+                toAdd = worseScores(i)
+                If i = (worseScores.Length - 1) And hasHalf Then toAdd /= 2
+                handicap += toAdd
+            End If
+        Next
+
+        handicap += adjustBy
+
+        netScore = grossScore - handicap
+
+        If outBox.Text <> "" Then
+            outBox.AppendText(vbNewLine & "Par Total: " & parTotal)
+        Else
+            outBox.AppendText("Par Total: " & parTotal)
+        End If
+        outBox.AppendText(vbNewLine & "Player Total: " & grossScore)
+        outBox.AppendText(vbNewLine & "Amount of bad holes to be used: " & worseHolesToBeUsed)
+        outBox.AppendText(vbNewLine & "Worse Holes: " & arrayToString(worseHoles))
+        outBox.AppendText(vbNewLine & "Worse Scores: " & arrayToString(worseScores))
+        outBox.AppendText(vbNewLine & "Adjust By: " & adjustBy)
+        outBox.AppendText(vbNewLine & "Handicap: " & handicap)
+        outBox.AppendText(vbNewLine & "Net Score: " & netScore)
+        outBox.AppendText(vbNewLine & "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+
+        outBox.ScrollToCaret()
+
+        'spreadClone = spreads
+        'Array.Sort(spreadClone)
+
+        'Dim worseSpreads(worseHolesToBeUsed - 1) As Integer
+        'spreadDex = 0
+
+        'MsgBox(worseSpreads.Length)
+        'For i As Integer = 16 To 16 - (worseHolesToBeUsed - 1) Step -1
+        'worseSpreads(spreadDex) = spreadClone(i)
+        'spreadDex += 1
+        'Next
+
+        'Dim worseHoles(worseHolesToBeUsed - 1) As Integer
+        'Dim worseHoleDex As Integer
+
+        'For i As Integer = 0 To spreads.Length - 1
+        'For j As Integer = 0 To worseSpreads.Length - 1
+        'If worseSpreads(j) = spreads(i) Then
+        'worseHoles(worseHoleDex) = i
+        'worseHoleDex += 1
+        'worseSpreads(j) = -1
+        'Exit For
+        'End If
+        'Next
+        'Next
+    End Sub
+
+    Function arrayToString(ByVal array As Array) As String
+        Dim newString As String = ""
+        For i As Integer = 0 To array.Length - 1
+            newString &= array(i)
+            If i <> array.Length - 1 Then newString += ", "
+        Next
+        Return newString
+    End Function
+End Class

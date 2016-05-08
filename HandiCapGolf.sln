@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Basic Express 2005
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "HandiCapGolf", "HandiCapGolf\HandiCapGolf.vbproj", "{B5C7AB44-C929-479D-9E26-5C85FEB94144}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5C7AB44-C929-479D-9E26-5C85FEB94144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C7AB44-C929-479D-9E26-5C85FEB94144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C7AB44-C929-479D-9E26-5C85FEB94144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C7AB44-C929-479D-9E26-5C85FEB94144}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
